@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.gmail.necnionch.mymod.legacymergechatlogs.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "ReceiveMessageMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

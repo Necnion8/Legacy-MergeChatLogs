@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "legacymergechatlogs",
+  "version": "${version}",
+  "name": "MergeChatLogs",
+  "description": "Combine subsequent messages into one line",
+  "authors": [
+    "Necnion8"
+  ],
+  "contact": {
+    "sources": "https://github.com/Necnion8/Legacy-MergeChatLogs",
+    "homepage": "https://github.com/Necnion8/Legacy-MergeChatLogs"
+  },
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.gmail.necnionch.mymod.legacymergechatlogs.MergeChatLogsMod"
+    ]
+  },
+  "mixins": [
+    "legacymergechatlogs.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.19",
+    "minecraft": ">=1.8 <=1.12.2"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
