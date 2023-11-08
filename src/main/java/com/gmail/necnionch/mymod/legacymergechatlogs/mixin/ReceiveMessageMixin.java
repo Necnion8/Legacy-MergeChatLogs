@@ -42,7 +42,7 @@ public class ReceiveMessageMixin {
     private void processNewMessage(Text message, CallbackInfo ci) {
         if (lastText == null || !lastText.asUnformattedString().equals(message.asUnformattedString()) || message.asUnformattedString().isEmpty()) {
             lastText = message;
-            lastCount = 0;
+            lastCount = 1;
             return;
         }
 
