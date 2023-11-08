@@ -1,12 +1,10 @@
 package com.gmail.necnionch.mymod.legacymergechatlogs.mixin;
 
+import com.gmail.necnionch.mymod.legacymergechatlogs.util.StackableChatHudLine;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,7 +27,6 @@ public class ReceiveMessageMixin {
 
     @Nullable
     private Text lastText;
-    private int lastCount;
 
     @Inject(
             method = "addMessage(Lnet/minecraft/text/Text;I)V",
@@ -44,27 +41,35 @@ public class ReceiveMessageMixin {
         }
     }
 
+    @Inject(
+            method = "render",
+            at = @At("HEAD")
+    )
+    public void render(int ticks, CallbackInfo ci) {
+        visibleMessages.stream()
+                .filter(line -> line instanceof StackableChatHudLine)
+                .forEachOrdered(line -> ((StackableChatHudLine) line).update(ticks));
+    }
+
     private void processNewMessage(Text message, CallbackInfo ci) {
-        if (lastText == null || !lastText.asUnformattedString().equals(message.asUnformattedString()) || message.asUnformattedString().isEmpty()) {
+        if (visibleMessages.isEmpty() || lastText == null || !lastText.asUnformattedString().equals(message.asUnformattedString()) || message.asUnformattedString().isEmpty()) {
             lastText = message;
-            lastCount = 1;
             return;
         }
 
         ci.cancel();
         lastText = message;
-        lastCount++;
-
-        Text mergedLine = message.copy()
-                .append(withText(" [", Formatting.DARK_GRAY))
-                .append(withText("x" + lastCount, Formatting.DARK_RED))
-                .append(withText("]", Formatting.DARK_GRAY));
 
         ChatHudLine lastLine = visibleMessages.get(0);
-        visibleMessages.set(0, new ChatHudLine(client.inGameHud.getTicks(), mergedLine, lastLine.getId()));
+        StackableChatHudLine stackedLastLine;
+
+        if (lastLine instanceof StackableChatHudLine) {
+            stackedLastLine = (StackableChatHudLine) lastLine;
+            stackedLastLine.increment(client.inGameHud.getTicks());
+        } else {
+            stackedLastLine = new StackableChatHudLine(client.inGameHud.getTicks(), message, lastLine.getId(), 2);
+            visibleMessages.set(0, stackedLastLine);
+        }
     }
 
-    private static Text withText(String text, Formatting formatting) {
-        return new LiteralText(text).setStyle(new Style().setFormatting(formatting));
-    }
 }
