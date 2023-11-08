@@ -1,5 +1,6 @@
 package com.gmail.necnionch.mymod.legacymergechatlogs.mixin;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.text.LiteralText;
@@ -21,6 +22,10 @@ public class ReceiveMessageMixin {
     @Shadow
     @Final
     private List<ChatHudLine> visibleMessages;
+
+    @Shadow
+    @Final
+    private MinecraftClient client;
 
     @Nullable
     private Text lastText;
@@ -56,7 +61,7 @@ public class ReceiveMessageMixin {
                 .append(withText("]", Formatting.DARK_GRAY));
 
         ChatHudLine lastLine = visibleMessages.get(0);
-        visibleMessages.set(0, new ChatHudLine(lastLine.getCreationTick(), mergedLine, lastLine.getId()));
+        visibleMessages.set(0, new ChatHudLine(client.inGameHud.getTicks(), mergedLine, lastLine.getId()));
     }
 
     private static Text withText(String text, Formatting formatting) {
