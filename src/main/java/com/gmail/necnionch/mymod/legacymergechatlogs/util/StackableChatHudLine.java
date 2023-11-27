@@ -65,9 +65,9 @@ public class StackableChatHudLine extends ChatHudLine {
 
     public Text formatStackedMessage() {
         return getOriginalText().copy()
-                .append(withText(" [", Formatting.DARK_GRAY))
+                .append(withText(" [", marking ? Formatting.GRAY : Formatting.DARK_GRAY))
                 .append(withText("x" + stacks, marking ? Formatting.RED : Formatting.DARK_RED))
-                .append(withText("]", Formatting.DARK_GRAY));
+                .append(withText("]", marking ? Formatting.GRAY : Formatting.DARK_GRAY));
     }
 
     public void update(int ticks) {
